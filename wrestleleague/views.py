@@ -83,6 +83,8 @@ class VoteView(APIView):
 
         serializer = VoteSerializer(data=data, many=True)
 
+        # TODO: validate that vote can be submitted
+
         if serializer.is_valid():
             serializer.save()
 
