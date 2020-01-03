@@ -7,8 +7,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from wrestleleague.models import Season
-from .serializers import UserSerializer, UserSerializerWithToken
+from wrestleleague.models import Season, Event, MatchQuestion, Vote
+from .serializers import UserSerializer, UserSerializerWithToken, SeasonSerializer, EventSerializer, \
+    MatchQuestionSerializer, VoteSerializer
 
 
 @api_view(['GET'])
@@ -29,7 +30,7 @@ class UserList(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request, fmt=None):
         serializer = UserSerializerWithToken(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,5 +38,40 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def seasons_list(request):
-    seasons = Season.objects.filter(published=True)
+class SeasonsView(APIView):
+
+    def get(self, request):
+        seasons = Season.objects.filter(published=True)
+        serializer = SeasonSerializer(seasons, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EventView(APIView):
+
+    def get(self, request, season_id=None):
+        events = Event.objects.filter(published=True)
+        if season_id:
+            events = events.filter(season_id=season_id)
+
+        serializer = EventSerializer(events, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MatchQuestionView(APIView):
+    def get(self, request, eventid):
+        questions = MatchQuestion.objects.filter(event_id=eventid)
+
+        serializer = MatchQuestionSerializer(questions, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class VoteView(APIView):
+    def get(self, request):
+        votes = Vote.objects.filter(user=request.user)
+
+        serializer = VoteSerializer(votes, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

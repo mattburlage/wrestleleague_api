@@ -20,6 +20,9 @@ class Vote(models.Model):
     rationale = models.TextField(null=True, blank=True)
     points_awarded = models.FloatField(null=True, blank=True)
 
+    def is_correct(self):
+        return self.answer == self.question.correct_answer
+
     def __str__(self):
         return f'Vote {self.user} for {self.question}'
 
