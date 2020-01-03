@@ -19,6 +19,7 @@ class Vote(models.Model):
     text_answer = models.CharField(max_length=128, null=True, blank=True)
     rationale = models.TextField(null=True, blank=True)
     points_awarded = models.FloatField(null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
 
     def is_correct(self):
         return self.answer == self.question.correct_answer

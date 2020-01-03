@@ -75,3 +75,17 @@ class VoteView(APIView):
         serializer = VoteSerializer(votes, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = request.data['votes']
+        for item in data:
+            item['user'] = request.user.id
+
+        serializer = VoteSerializer(data=data, many=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

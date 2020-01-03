@@ -74,14 +74,13 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class VoteSerializer(serializers.ModelSerializer):
-    # user = serializers.IntegerField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
     points_awarded = serializers.FloatField(read_only=True)
     is_correct = serializers.BooleanField(read_only=True)
+    added_on = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Vote
         fields = [
-            'user', 'question', 'answer', 'text_answer', 'rationale',
-            'points_awarded', 'is_correct',
+            'question', 'answer', 'text_answer', 'rationale',
+            'points_awarded', 'is_correct', 'user', 'added_on'
         ]
